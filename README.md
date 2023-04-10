@@ -16,10 +16,10 @@ I use the code as following.
     t.merge( context, writer );
     return writer.toString();
 ``` 
-with the template like
+with the template like $item in $contentValue.items, $item.value
 ```velocity 
       #foreach( $item in $contentValue.items )
-			 <tr style="mso-yfti-irow:0;mso-yfti-firstrow:yes">
+	     <tr style="mso-yfti-irow:0;mso-yfti-firstrow:yes">
               <td width="30%" valign="top" style="width:30.0%;border:none;
               border-top:solid #EAEAEA 1.0pt;mso-border-top-alt:solid #EAEAEA .75pt;
               padding:4.5pt 7.5pt 4.5pt 7.5pt">
