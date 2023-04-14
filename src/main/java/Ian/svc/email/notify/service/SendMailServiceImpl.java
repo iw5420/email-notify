@@ -66,9 +66,9 @@ public class SendMailServiceImpl implements SendMailService{
         checkCarbon = checkMails(tranrq.getCarbonCopyAddress(), emailCheckList);      
     }   
     if(!checkMails(tranrq.getReceiverAddress(), emailCheckList) || !checkCarbon) {
-      mwHeader.error(mwHeader, SendEmailReturnEnum.INVALIDARGUMENTS.getReturnCode(), checkEmailStr);
-      logger.error("[ERROR][SendMailService] 郵件欄位檢核錯誤 : {}",tranrq.getReceiverAddress());
-      return mwHeader;
+        mwHeader = mwHeader.error(mwHeader, SendEmailReturnEnum.INVALIDARGUMENTS.getReturnCode(), checkEmailStr);
+        logger.error("[ERROR][SendMailService] 郵件欄位檢核錯誤 : {}",tranrq.getReceiverAddress());
+        return mwHeader;
     }
     
     //若是沒值 採用預設值
@@ -84,8 +84,8 @@ public class SendMailServiceImpl implements SendMailService{
     if(StringUtils.equals(tranrq.getThemeId(), MIPP00001)) {
       templatePath.append("/template/").append(MIPP00001).append(".vm");
     }else {
-      logger.error("[ERROR][argument]:{}", checkTemplate);
-      mwHeader.error(mwHeader, SendEmailReturnEnum.INVALIDARGUMENTS.getReturnCode(), checkTemplate);
+        logger.error("[ERROR][argument]:{}", checkTemplate);
+        mwHeader = mwHeader.error(mwHeader, SendEmailReturnEnum.INVALIDARGUMENTS.getReturnCode(), checkTemplate);
       return mwHeader;
     }
     
@@ -93,11 +93,11 @@ public class SendMailServiceImpl implements SendMailService{
     try {
       mailUtils.send(sender,senderName,receiver,url, port, tranrq, templatePath.toString());
     } catch (NotifyException e) {
-      logger.error("[ERROR][sendMail]:{}", e.getErrorMessage());
-      mwHeader.error(mwHeader, e.getReturnEnum().getReturnCode(), e.getErrorMessage());
+        logger.error("[ERROR][sendMail]:{}", e.getErrorMessage());
+        mwHeader = mwHeader.error(mwHeader, e.getReturnEnum().getReturnCode(), e.getErrorMessage());
       return mwHeader;
     }
-    mwHeader.setCode(mwHeader, SendEmailReturnEnum.SUCCESS);
+    mwHeader = mwHeader.setCode(mwHeader, SendEmailReturnEnum.SUCCESS);
     logger.info("[email-notify][end] sendMail service 結束");
     return mwHeader;   
   }

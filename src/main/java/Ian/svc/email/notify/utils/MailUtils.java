@@ -1,5 +1,8 @@
 package Ian.svc.email.notify.utils;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +19,16 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import Ian.svc.email.notify.dto.mail.MailRq;
 import Ian.svc.email.notify.enums.SendEmailReturnEnum;
 import Ian.svc.email.notify.exception.NotifyException;
 import Ian.svc.email.notify.handler.AbstractTemplateHandler;
+import org.springframework.core.io.ClassPathResource;
 
 
 public class MailUtils {
@@ -144,13 +151,14 @@ public class MailUtils {
   private MimeBodyPart getPicturePart(String imageFileName) throws NotifyException {
       MimeBodyPart picturePart = new MimeBodyPart();
       try {
-          FileDataSource fds = new FileDataSource("template/img/" + imageFileName);
-
-          picturePart.setDataHandler(new DataHandler(fds));
-          picturePart.setFileName(fds.getName());
+          String path = File.separator + "template" + File.separator + "img" + File.separator + imageFileName;
+          InputStream inputStream = new ClassPathResource(path).getInputStream();
+          ByteArrayDataSource bds = new ByteArrayDataSource(inputStream, "image/jpg");
+          picturePart.setDataHandler(new DataHandler(bds));
+          picturePart.setFileName(bds.getName());
           picturePart.setHeader("Content-ID", "<" + imageFileName + ">");
       }
-      catch (MessagingException e) {
+      catch (MessagingException | IOException e) {
         throw new NotifyException("cannot get image resource: " + imageFileName, SendEmailReturnEnum.FAIL, e);
       }
       return picturePart;
